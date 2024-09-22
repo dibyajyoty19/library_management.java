@@ -1,0 +1,165 @@
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Scanner;
+
+class Student {
+    String name;
+    int id_no;
+    String stream;
+    String book1, book2;
+    int book_no, issuedbook;
+
+    Student(String name, int id_no, String stream) {
+        this.name = name;
+        this.id_no = id_no;
+        this.stream = stream;
+    }
+}
+
+public class LibraryManagement {
+
+    // Selection sort based on id_no
+    static void selectionSort(Student[] arr) {
+        int n = arr.length;
+        for (int i = 0; i < n - 1; i++) {
+            int min_idx = i;
+            for (int j = i + 1; j < n; j++)
+                if (arr[j].id_no < arr[min_idx].id_no)
+                    min_idx = j;
+            
+            // Swap the entire Student object, not just fields
+            Student temp = arr[min_idx];
+            arr[min_idx] = arr[i];
+            arr[i] = temp;
+        }
+    }
+
+    static void display(Student[] arr) {
+        for (Student student : arr) {
+            System.out.println("\nName of Student: " + student.name);
+            System.out.println("Id of Student: " + student.id_no);
+            System.out.println("Stream of Student: " + student.stream);
+        }
+    }
+
+    // Binary Search Tree Implementation for Books
+    static class FinalDSA {
+        class Node {
+            String key;
+            Node left, right;
+
+            public Node(String item) {
+                key = item;
+                left = right = null;
+            }
+        }
+
+        Node root;
+
+        FinalDSA() {
+            root = null;
+        }
+
+        // Insert Book
+        void insert(String key) {
+            root = insertRec(root, key);
+        }
+
+        Node insertRec(Node root, String key) {
+            if (root == null) {
+                root = new Node(key);
+                return root;
+            }
+            if (key.compareTo(root.key) < 0)
+                root.left = insertRec(root.left, key);
+            else if (key.compareTo(root.key) > 0)
+                root.right = insertRec(root.right, key);
+            else
+                System.out.println("Book already exists.");
+            return root;
+        }
+
+        // Search Book
+        public boolean containsNode(String value) {
+            return containsNodeRecursive(root, value);
+        }
+
+        private boolean containsNodeRecursive(Node current, String key) {
+            if (current == null) {
+                return false;
+            }
+            if (key.equalsIgnoreCase(current.key)) {
+                return true;
+            }
+            return key.compareTo(current.key) < 0
+                    ? containsNodeRecursive(current.left, key)
+                    : containsNodeRecursive(current.right, key);
+        }
+
+        // Print tree in 2D
+        void printTree() {
+            printTreeRec(root, 0);
+        }
+
+        void printTreeRec(Node t, int space) {
+            if (t == null)
+                return;
+            space += 5;
+            printTreeRec(t.right, space);
+            System.out.println();
+            for (int i = 5; i < space; i++)
+                System.out.print(" ");
+            System.out.print("[" + t.key + "]");
+            printTreeRec(t.left, space);
+        }
+
+        // Print Books Inorder
+        void printInorder(Node node) {
+            if (node == null)
+                return;
+            printInorder(node.left);
+            System.out.print(node.key + " ");
+            printInorder(node.right);
+        }
+
+        void printInorder() {
+            printInorder(root);
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        FinalDSA tree = new FinalDSA();
+        HashMap<String, Integer> hashmapping = new HashMap<>();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        Calendar cal = Calendar.getInstance();
+
+        // Initialize students
+        Student[] array = new Student[3];
+        array[0] = new Student("Rajvi", 1741078, "B.Tech-ICT");
+        array[1] = new Student("Krushna", 1741086, "B.Tech-ICT");
+        array[2] = new Student("Kalagee", 1741052, "B.Tech-ICT");
+
+        // Sort and display students
+        selectionSort(array);
+        display(array);
+
+        // Create a file to store data of students and ensure proper closing
+        try (BufferedWriter br = new BufferedWriter(new FileWriter("append.txt", true));
+             BufferedReader reader = new BufferedReader(new FileReader("x.txt"))) {
+
+            Date currentDay = cal.getTime();
+            String formattedDate = formatter.format(currentDay);
+            br.write("Date: " + formattedDate + "\n");
+
+            // Example logic to read or write more data...
+            // Read or write operations with the reader and writer here.
+
+        } catch (IOException e) {
+            System.out.println("Error handling files: " + e.getMessage());
+        }
+    }
+}
